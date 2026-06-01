@@ -1,0 +1,108 @@
+/* ============================================================
+   Ecowave Rental — UI Kit v3
+   Vehicle-centric hero + real-photo sections (A-Class AMG Line)
+   Loads after kit2.css.
+   ============================================================ */
+
+/* ---------- Vehicle hero ---------- */
+.vhero { position: relative; background: var(--ink-900); color: var(--fg-on-dark); overflow: hidden; isolation: isolate; }
+.vhero::after {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 26px 26px; mask-image: linear-gradient(to bottom, #000, transparent 72%);
+}
+.vhero .container { position: relative; z-index: 1; }
+.vhero-grid { display: grid; grid-template-columns: 0.92fr 1.12fr; gap: 48px; align-items: center; padding: 120px 0 76px; }
+.vhero-eyebrow { color: var(--green-300); }
+.vhero h1 { font-family: var(--font-display); font-size: clamp(2.4rem, 4.6vw, 3.9rem); font-weight: 700; line-height: 1.02; letter-spacing: -0.025em; color: #fff; margin: 16px 0 0; }
+.vhero h1 .amg { display: inline-block; color: var(--lime); }
+.vhero-tag { font-size: 18px; color: rgba(242,245,243,0.7); margin: 14px 0 0; }
+.vhero-avail { display: inline-flex; align-items: center; gap: 8px; background: rgba(45,225,31,0.14); border: 1px solid rgba(45,225,31,0.4); color: var(--lime-soft); font-size: 12.5px; font-weight: 700; letter-spacing: 0.02em; padding: 7px 14px; border-radius: var(--radius-pill); }
+.vhero-avail .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 4px rgba(45,225,31,0.22); }
+
+/* spec chips */
+.vchips { display: flex; flex-wrap: wrap; gap: 10px; margin: 26px 0; }
+.vchip { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-pill); padding: 9px 15px; font-size: 13.5px; font-weight: 600; color: #fff; }
+.vchip svg { width: 16px; height: 16px; color: var(--green-300); }
+
+/* price block */
+.vprice { display: flex; align-items: center; gap: 22px; padding: 20px 0; margin-bottom: 24px; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); }
+.vprice .pmain { display: flex; align-items: baseline; gap: 5px; }
+.vprice .pmain .cur { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: #fff; }
+.vprice .pmain b { font-family: var(--font-display); font-size: 46px; font-weight: 700; letter-spacing: -0.02em; color: #fff; line-height: 1; }
+.vprice .pmain span { font-size: 15px; color: rgba(242,245,243,0.6); }
+.vprice .pdep { padding-left: 22px; border-left: 1px solid rgba(255,255,255,0.12); }
+.vprice .pdep .l { font-size: 12px; color: rgba(242,245,243,0.5); display: block; }
+.vprice .pdep b { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: #fff; }
+
+.vctas { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* hero image */
+.vhero-visual { position: relative; }
+.vhero-img { width: 100%; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); position: relative; z-index: 1; }
+.vhero-glow { position: absolute; width: 70%; height: 70%; border-radius: 50%; background: radial-gradient(circle, rgba(45,225,31,0.34), transparent 65%); top: -10%; right: -8%; filter: blur(20px); z-index: 0; }
+
+/* ---------- Highlights stat band ---------- */
+.stat-band { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; background: var(--ink-900); border-radius: var(--radius-2xl); overflow: hidden; }
+.stat-cell { padding: 38px 28px; text-align: center; border-right: 1px solid rgba(255,255,255,0.08); }
+.stat-cell:last-child { border-right: none; }
+.stat-cell .sv { font-family: var(--font-display); font-size: 36px; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
+.stat-cell .sv .u { color: var(--lime); }
+.stat-cell .sl { font-size: 13px; color: rgba(242,245,243,0.6); margin-top: 6px; letter-spacing: 0.02em; }
+
+/* ---------- Premium interior split ---------- */
+.split-2 { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+.split-2.rev .split-media { order: 2; }
+.split-media img { width: 100%; border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); display: block; }
+.feature-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 26px; }
+.feature-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 20px; }
+.feature-card .fc-ic { width: 42px; height: 42px; border-radius: var(--radius-md); background: var(--green-50); display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+.feature-card .fc-ic svg { width: 21px; height: 21px; color: var(--green-600); }
+.feature-card h4 { font-family: var(--font-display); font-size: 16px; font-weight: 600; margin: 0 0 5px; color: var(--ink-900); }
+.feature-card p { font-size: 13.5px; line-height: 1.5; color: var(--ink-400); margin: 0; }
+
+/* sell-point ticks */
+.sell-strip { display: flex; flex-wrap: wrap; gap: 12px 26px; margin-top: 26px; }
+.sell-strip .s { display: inline-flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: 600; color: var(--ink-800); }
+.sell-strip .s svg { width: 18px; height: 18px; color: var(--green-600); }
+
+/* ---------- AMG feature grid ---------- */
+.amg-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.amg-card { background: var(--ink-900); color: #fff; border-radius: var(--radius-lg); padding: 26px; position: relative; overflow: hidden; transition: transform var(--dur-base) var(--ease-out); }
+.amg-card:hover { transform: translateY(-4px); }
+.amg-card .a-ic { width: 46px; height: 46px; border-radius: var(--radius-md); background: rgba(45,225,31,0.14); border: 1px solid rgba(45,225,31,0.3); display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+.amg-card .a-ic svg { width: 22px; height: 22px; color: var(--lime); }
+.amg-card h4 { font-family: var(--font-display); font-size: 17px; font-weight: 600; margin: 0 0 7px; color: #fff; }
+.amg-card p { font-size: 13.5px; line-height: 1.55; color: rgba(242,245,243,0.62); margin: 0; }
+
+/* ---------- Driver experience band ---------- */
+.driver-band { position: relative; border-radius: var(--radius-2xl); overflow: hidden; min-height: 440px; display: flex; align-items: flex-end; }
+.driver-band img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.driver-grad { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(11,15,13,0.9), rgba(11,15,13,0.25) 60%, rgba(11,15,13,0.4)); }
+.driver-content { position: relative; z-index: 2; padding: 48px; max-width: 560px; }
+.driver-content h2 { font-family: var(--font-display); font-size: clamp(1.9rem, 3vw, 2.4rem); font-weight: 700; color: #fff; letter-spacing: -0.02em; margin: 12px 0 10px; }
+.driver-content p { font-size: 16px; line-height: 1.6; color: rgba(242,245,243,0.8); margin: 0; }
+
+/* ---------- Real-photo gallery (detail page) ---------- */
+.rgallery-main { width: 100%; height: 460px; border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); object-fit: cover; display: block; }
+.rgallery-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 14px; }
+.rgallery-thumbs img { height: 92px; width: 100%; object-fit: cover; border-radius: var(--radius-md); cursor: pointer; border: 2px solid transparent; transition: border-color var(--dur-fast); }
+.rgallery-thumbs img.active { border-color: var(--green-600); }
+.vd-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+
+/* ---------- Responsive v3 ---------- */
+@media (max-width: 980px) {
+  .vhero-grid { grid-template-columns: 1fr; gap: 36px; padding-top: 104px; }
+  .vhero-visual { order: -1; }
+  .stat-band { grid-template-columns: 1fr 1fr; }
+  .stat-cell:nth-child(2) { border-right: none; }
+  .stat-cell:nth-child(1), .stat-cell:nth-child(2) { border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .split-2 { grid-template-columns: 1fr; gap: 32px; }
+  .split-2.rev .split-media { order: 0; }
+  .amg-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 620px) {
+  .stat-band { grid-template-columns: 1fr 1fr; }
+  .amg-grid, .feature-cards { grid-template-columns: 1fr; }
+  .rgallery-main { height: 300px; }
+}

@@ -1,0 +1,114 @@
+/* ============================================================
+   Ecowave Rental — UI Kit v4 · content pages (About / Vision / Invest)
+   ============================================================ */
+
+/* ---------- Page hero (compact dark) ---------- */
+.page-hero { background: var(--ink-900); color: var(--fg-on-dark); position: relative; overflow: hidden; isolation: isolate; }
+.page-hero::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px); background-size: 26px 26px; mask-image: linear-gradient(to bottom, #000, transparent 80%); }
+.page-hero-glow { position: absolute; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(45,225,31,0.26), transparent 65%); top: -180px; left: 40%; filter: blur(20px); z-index: 0; }
+.page-hero .container { position: relative; z-index: 1; }
+.page-hero-inner { padding: 132px 0 84px; max-width: 760px; }
+.page-hero h1 { font-family: var(--font-display); font-size: clamp(2.4rem, 4.8vw, 3.8rem); font-weight: 700; line-height: 1.04; letter-spacing: -0.025em; color: #fff; margin: 16px 0 0; }
+.page-hero .lead { font-size: 19px; line-height: 1.6; color: rgba(242,245,243,0.72); margin: 18px 0 0; max-width: 560px; }
+.page-hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+.page-hero-eyebrow { color: var(--green-300); }
+
+/* ---------- Stat band (light) ---------- */
+.stat-band-light { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--line); border-radius: var(--radius-2xl); overflow: hidden; background: var(--white); box-shadow: var(--shadow-sm); }
+.stat-band-light .sc { padding: 34px 24px; text-align: center; border-right: 1px solid var(--line); }
+.stat-band-light .sc:last-child { border-right: none; }
+.stat-band-light .sv { font-family: var(--font-display); font-size: 34px; font-weight: 700; color: var(--ink-900); letter-spacing: -0.02em; }
+.stat-band-light .sl { font-size: 13px; color: var(--ink-400); margin-top: 6px; }
+
+/* ---------- Story / mission split ---------- */
+.story-split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+.story-split img { width: 100%; border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); }
+.prose-block h2 { font-family: var(--font-display); font-size: clamp(1.9rem, 3vw, 2.4rem); font-weight: 700; letter-spacing: -0.02em; margin: 12px 0 16px; color: var(--ink-900); }
+.prose-block p { font-size: 16px; line-height: 1.7; color: var(--ink-500); margin: 0; max-width: 48ch; }
+
+/* ---------- Value / benefit cards (4-up) ---------- */
+.val-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.val-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-sm); transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
+.val-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.val-card .v-ic { width: 50px; height: 50px; border-radius: var(--radius-md); background: var(--green-50); display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+.val-card .v-ic svg { width: 24px; height: 24px; color: var(--green-600); }
+.val-card h4 { font-family: var(--font-display); font-size: 18px; font-weight: 600; margin: 0 0 8px; color: var(--ink-900); }
+.val-card p { font-size: 14px; line-height: 1.55; color: var(--ink-400); margin: 0; }
+
+/* ---------- Team ---------- */
+.team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.team-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 30px; text-align: center; box-shadow: var(--shadow-sm); }
+.team-avatar { width: 76px; height: 76px; border-radius: 50%; background: var(--green-100); color: var(--green-700); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 24px; margin: 0 auto 16px; }
+.team-card .tn { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--ink-900); }
+.team-card .tr { font-size: 13.5px; color: var(--ink-400); margin-top: 4px; }
+
+/* ---------- Vision pillars ---------- */
+.pillar-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+.pillar { display: flex; gap: 20px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-sm); }
+.pillar .p-ic { width: 52px; height: 52px; flex: none; border-radius: var(--radius-md); background: var(--ink-900); display: flex; align-items: center; justify-content: center; }
+.pillar .p-ic svg { width: 24px; height: 24px; color: var(--lime); }
+.pillar h4 { font-family: var(--font-display); font-size: 18px; font-weight: 600; margin: 2px 0 7px; color: var(--ink-900); }
+.pillar p { font-size: 14.5px; line-height: 1.55; color: var(--ink-400); margin: 0; }
+
+/* ---------- Roadmap timeline ---------- */
+.roadmap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+.rm-step { position: relative; padding: 0 22px; }
+.rm-step::before { content: ""; position: absolute; top: 9px; left: 0; right: 0; height: 2px; background: var(--line); }
+.rm-step:first-child::before { left: 50%; }
+.rm-step:last-child::before { right: 50%; }
+.rm-dot { position: relative; width: 18px; height: 18px; border-radius: 50%; background: var(--green-600); border: 4px solid var(--paper); margin: 0 auto 20px; z-index: 1; box-shadow: 0 0 0 1px var(--green-200); }
+.rm-step .ry { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--green-600); text-align: center; }
+.rm-step h4 { font-family: var(--font-display); font-size: 17px; font-weight: 600; margin: 6px 0 7px; color: var(--ink-900); text-align: center; }
+.rm-step p { font-size: 13.5px; line-height: 1.5; color: var(--ink-400); margin: 0; text-align: center; }
+
+/* ---------- Invest: how-it-works (3-up, numbered dark) ---------- */
+.how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.how-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-xl); padding: 32px; box-shadow: var(--shadow-sm); position: relative; }
+.how-num { font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--green-600); }
+.how-card .h-ic { width: 56px; height: 56px; border-radius: var(--radius-md); background: var(--green-50); display: flex; align-items: center; justify-content: center; margin: 14px 0 18px; }
+.how-card .h-ic svg { width: 26px; height: 26px; color: var(--green-600); }
+.how-card h4 { font-family: var(--font-display); font-size: 19px; font-weight: 600; margin: 0 0 8px; color: var(--ink-900); }
+.how-card p { font-size: 14.5px; line-height: 1.55; color: var(--ink-400); margin: 0; }
+
+/* ---------- Revenue split ---------- */
+.revenue-card { background: var(--ink-900); color: #fff; border-radius: var(--radius-2xl); padding: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; overflow: hidden; position: relative; }
+.revenue-card::before { content: ""; position: absolute; width: 360px; height: 360px; border-radius: 50%; background: radial-gradient(circle, rgba(45,225,31,0.3), transparent 65%); right: -90px; top: -120px; }
+.revenue-card .rc-copy { position: relative; z-index: 1; }
+.revenue-card h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 2.8vw, 2.3rem); font-weight: 700; letter-spacing: -0.02em; color: #fff; margin: 12px 0 0; }
+.revenue-card .rc-note { font-size: 13.5px; color: rgba(242,245,243,0.55); margin-top: 18px; }
+.split-bars { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 18px; }
+.split-row .sr-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; }
+.split-row .sr-pct { font-family: var(--font-display); font-size: 30px; font-weight: 700; color: #fff; }
+.split-row .sr-l { font-size: 13.5px; color: rgba(242,245,243,0.7); }
+.split-track { height: 12px; border-radius: 999px; background: rgba(255,255,255,0.1); overflow: hidden; }
+.split-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--green-600), var(--lime)); }
+
+/* ---------- Requirements checklist ---------- */
+.req-split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+.req-list { display: flex; flex-direction: column; gap: 14px; }
+.req-item { display: flex; align-items: flex-start; gap: 13px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 16px 18px; box-shadow: var(--shadow-xs); }
+.req-item .rq-ic { width: 26px; height: 26px; flex: none; border-radius: 50%; background: var(--green-50); display: flex; align-items: center; justify-content: center; }
+.req-item .rq-ic svg { width: 15px; height: 15px; color: var(--green-600); }
+.req-item span { font-size: 15px; font-weight: 500; color: var(--ink-800); line-height: 1.4; }
+
+/* ---------- Page CTA band ---------- */
+.cta-band { background: var(--ink-900); color: #fff; border-radius: var(--radius-2xl); padding: 64px; text-align: center; position: relative; overflow: hidden; }
+.cta-band::before { content: ""; position: absolute; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(circle, rgba(45,225,31,0.28), transparent 65%); left: 50%; top: -200px; transform: translateX(-50%); }
+.cta-band h2 { position: relative; font-family: var(--font-display); font-size: clamp(1.9rem, 3vw, 2.5rem); font-weight: 700; letter-spacing: -0.02em; color: #fff; margin: 0; }
+.cta-band p { position: relative; font-size: 17px; color: rgba(242,245,243,0.7); margin: 14px 0 28px; }
+.cta-band .cta-row { position: relative; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+@media (max-width: 980px) {
+  .stat-band-light { grid-template-columns: 1fr 1fr; }
+  .stat-band-light .sc:nth-child(2) { border-right: none; }
+  .story-split, .req-split, .revenue-card { grid-template-columns: 1fr; gap: 32px; }
+  .val-grid { grid-template-columns: 1fr 1fr; }
+  .team-grid, .how-grid { grid-template-columns: 1fr; }
+  .pillar-grid { grid-template-columns: 1fr; }
+  .roadmap { grid-template-columns: 1fr 1fr; gap: 32px 0; }
+  .rm-step::before { display: none; }
+  .cta-band { padding: 44px 28px; }
+}
+@media (max-width: 560px) {
+  .val-grid, .roadmap { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,54 @@
+/* ============================================================
+   Ecowave Rental — UI Kit v5 · Leadership / Founders
+   ============================================================ */
+.founders-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; max-width: 940px; margin-left: auto; margin-right: auto; align-items: start; }
+
+.founder-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-2xl); overflow: hidden; box-shadow: var(--shadow-md); transition: box-shadow var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out); }
+.founder-card:hover { box-shadow: var(--shadow-xl); transform: translateY(-4px); }
+
+/* Portrait */
+.founder-portrait { position: relative; aspect-ratio: 4 / 5; background: linear-gradient(155deg, #16201b 0%, #0b0f0d 70%); overflow: hidden; }
+.founder-portrait image-slot { position: relative; z-index: 2; width: 100%; height: 100%; }
+.founder-portrait img { position: relative; z-index: 2; width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform var(--dur-slower) var(--ease-out); }
+.founder-card:hover .founder-portrait img { transform: scale(1.04); }
+/* Monogram only shows when no photo dropped (sits behind) */
+.founder-monogram { position: absolute; inset: 0; z-index: 1; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 96px; letter-spacing: -0.02em; color: rgba(255,255,255,0.06); }
+/* subtle gradient so the role pill stays legible on any photo */
+.founder-portrait::after { content: ""; position: absolute; z-index: 2; inset: 0; background: linear-gradient(to bottom, rgba(11,15,13,0.34) 0%, transparent 26%); pointer-events: none; }
+.founder-role { position: absolute; z-index: 3; top: 16px; left: 16px; white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--lime-soft); background: rgba(11,15,13,0.6); backdrop-filter: blur(8px); border: 1px solid rgba(45,225,31,0.34); padding: 7px 13px; border-radius: var(--radius-pill); }
+
+/* Body */
+.founder-body { padding: 28px 30px 26px; }
+.founder-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.founder-head h3 { font-family: var(--font-display); font-size: clamp(1.3rem, 2vw, 1.7rem); font-weight: 700; letter-spacing: -0.02em; color: var(--ink-900); margin: 0; }
+.founder-meta { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; color: var(--ink-400); white-space: nowrap; }
+.founder-meta svg { color: var(--green-600); }
+.founder-intro { font-size: 15.5px; line-height: 1.65; color: var(--ink-500); margin: 14px 0 0; }
+
+/* Expandable bio — class-driven max-height (grid-fr unreliable in some engines) */
+.founder-bio { display: block; overflow: hidden; max-height: 0; transition: max-height var(--dur-slow) var(--ease-out); }
+.founder-card.open .founder-bio { max-height: 1600px; }
+.founder-bio-inner { min-height: 0; }
+.founder-card.open .founder-bio-inner { padding-top: 18px; }
+.founder-bio-inner > p { font-size: 14.5px; line-height: 1.7; color: var(--ink-500); margin: 0 0 14px; }
+
+/* Tags */
+.founder-tags { margin-top: 18px; }
+.ftag-label { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-400); margin-bottom: 11px; }
+.ftag-label svg { color: var(--green-600); }
+.ftag-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.ftag { font-size: 12.5px; font-weight: 600; color: var(--green-700); background: var(--green-50); border: 1px solid var(--green-100); padding: 7px 13px; border-radius: var(--radius-pill); transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+.ftag:hover { background: var(--green-100); transform: translateY(-1px); }
+.ftag-sector { color: var(--ink-700); background: var(--mist); border-color: var(--line); }
+.ftag-sector:hover { background: var(--cloud); }
+
+/* Toggle */
+.founder-toggle { display: inline-flex; align-items: center; gap: 7px; margin-top: 22px; font-family: var(--font-body); font-size: 14px; font-weight: 700; color: var(--green-700); background: transparent; border: none; padding: 0; cursor: pointer; transition: gap var(--dur-fast) var(--ease-out); }
+.founder-toggle:hover { gap: 11px; }
+.founder-toggle svg { transition: transform var(--dur-base) var(--ease-out); }
+
+@media (max-width: 860px) {
+  .founders-grid { grid-template-columns: 1fr; max-width: 480px; }
+  .founder-body { padding: 24px 22px 22px; }
+  .founder-monogram { font-size: 76px; }
+}

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Block nothing — all public pages are indexable
+Disallow: /assets-data.js
+Disallow: /scraps/
+
+Sitemap: https://www.ecowaverental.be/sitemap.xml
