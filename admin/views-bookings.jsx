@@ -20,8 +20,8 @@ function Bookings({ openNew }) {
   const shown = list.filter(b => {
     if (filter !== "all" && b.status !== filter) return false;
     if (q) {
-      const c = A.customerById(b.customer);
-      const hay = (b.id + " " + c.name + " " + b.source).toLowerCase();
+      const c = A.customerById(b.customer) || {};
+      const hay = (b.id + " " + (c.name || "") + " " + b.source).toLowerCase();
       if (!hay.includes(q.toLowerCase())) return false;
     }
     return true;
@@ -81,12 +81,13 @@ function Bookings({ openNew }) {
             <thead><tr><th>Réf.</th><th>Client</th><th className="hide-m">Véhicule</th><th className="hide-m">Période</th><th>Statut</th><th className="hide-m">Source</th><th>Total</th><th></th></tr></thead>
             <tbody>
               {shown.map(b => {
-                const c = A.customerById(b.customer), v = A.vehicleById(b.vehicle);
+                const c = A.customerById(b.customer) || {}; const v = A.vehicleById(b.vehicle) || {};
+                const cname = c.name || "Client inconnu"; const vname = v.name || "Véhicule";
                 return (
                   <tr key={b.id}>
                     <td style={{ fontWeight: 700, color: "var(--ink-500)" }}>{b.id}</td>
-                    <td><div className="cust-cell"><div className="av">{initials(c.name)}</div><div><div className="nm">{c.name}</div><div className="meta">{c.phone}</div></div></div></td>
-                    <td className="hide-m"><div className="veh-cell"><img src={v.photo} alt="" /><b>{v.name.replace("Mercedes-Benz ", "")}</b></div></td>
+                    <td><div className="cust-cell"><div className="av">{initials(cname)}</div><div><div className="nm">{cname}</div><div className="meta">{c.phone || ""}</div></div></div></td>
+                    <td className="hide-m"><div className="veh-cell"><img src={v.photo || ""} alt="" /><b>{vname.replace("Mercedes-Benz ", "")}</b></div></td>
                     <td className="hide-m" style={{ color: "var(--ink-500)" }}>{fmtDate(b.from)} → {fmtDate(b.to)}<div style={{ fontSize: 11, color: "var(--ink-300)" }}>{nights(b.from, b.to)} nuits</div></td>
                     <td><StatusBadge status={b.status} /></td>
                     <td className="hide-m"><span className="src-tag">{b.source}</span></td>

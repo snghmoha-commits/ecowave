@@ -26,7 +26,7 @@ function toast(msg) {
 }
 window.toast = toast;
 
-function initials(name) { return name.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase(); }
+function initials(name) { return (name || "?").split(" ").map(w => w[0]).filter(Boolean).slice(0, 2).join("").toUpperCase() || "?"; }
 function eur(n) { return "€" + n.toLocaleString("fr-BE"); }
 function fmtDate(s) {
   const [y, m, d] = s.split("-");
@@ -120,12 +120,13 @@ function Overview({ go }) {
             <thead><tr><th>Réf.</th><th>Client</th><th className="hide-m">Véhicule</th><th className="hide-m">Dates</th><th>Statut</th><th>Total</th></tr></thead>
             <tbody>
               {recent.map(b => {
-                const c = A.customerById(b.customer), v = A.vehicleById(b.vehicle);
+                const c = A.customerById(b.customer) || {}; const v = A.vehicleById(b.vehicle) || {};
+                const cname = c.name || "Client inconnu"; const vname = v.name || "Véhicule";
                 return (
                   <tr key={b.id} className="clickable" onClick={() => go("bookings")}>
                     <td style={{ fontWeight: 700, color: "var(--ink-500)" }}>{b.id}</td>
-                    <td><div className="cust-cell"><div className="av">{initials(c.name)}</div><div><div className="nm">{c.name}</div><div className="meta">{b.source}</div></div></div></td>
-                    <td className="hide-m"><div className="veh-cell"><img src={v.photo} alt="" /><b>{v.name.replace("Mercedes-Benz ", "")}</b></div></td>
+                    <td><div className="cust-cell"><div className="av">{initials(cname)}</div><div><div className="nm">{cname}</div><div className="meta">{b.source}</div></div></div></td>
+                    <td className="hide-m"><div className="veh-cell"><img src={v.photo || ""} alt="" /><b>{vname.replace("Mercedes-Benz ", "")}</b></div></td>
                     <td className="hide-m" style={{ color: "var(--ink-500)" }}>{fmtDate(b.from)} → {fmtDate(b.to)}</td>
                     <td><StatusBadge status={b.status} /></td>
                     <td style={{ fontWeight: 700 }}>{eur(b.total)}</td>

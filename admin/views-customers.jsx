@@ -3,7 +3,7 @@ function Customers() {
   const A = window.ADMIN;
   const [q, setQ] = useState("");
   const [sel, setSel] = useState(null);
-  const shown = A.customers.filter(c => !q || (c.name + c.email + c.city + c.source).toLowerCase().includes(q.toLowerCase()));
+  const shown = A.customers.filter(c => !q || ((c.name || "") + (c.email || "") + (c.city || "") + (c.source || "")).toLowerCase().includes(q.toLowerCase()));
 
   function custBookings(id) { return A.bookings.filter(b => b.customer === id); }
 
@@ -69,12 +69,12 @@ function CustomerDrawer({ c, bookings, onClose }) {
           <h4 style={{ fontFamily: "var(--font-d)", fontSize: 14, fontWeight: 700, marginBottom: 12 }}>Historique ({bookings.length})</h4>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {bookings.map(b => {
-              const v = A.vehicleById(b.vehicle);
+              const v = A.vehicleById(b.vehicle) || {};
               return (
                 <div key={b.id} style={{ border: "1px solid var(--line)", borderRadius: 12, padding: 13, display: "flex", alignItems: "center", gap: 12 }}>
-                  <img src={v.photo} alt="" style={{ width: 46, height: 32, borderRadius: 6, objectFit: "cover" }} />
+                  <img src={v.photo || ""} alt="" style={{ width: 46, height: 32, borderRadius: 6, objectFit: "cover" }} />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 12.5, fontWeight: 700 }}>{v.name.replace("Mercedes-Benz ", "")} · {b.id}</div>
+                    <div style={{ fontSize: 12.5, fontWeight: 700 }}>{(v.name || "Véhicule").replace("Mercedes-Benz ", "")} · {b.id}</div>
                     <div style={{ fontSize: 11.5, color: "var(--ink-400)" }}>{fmtDate(b.from)} → {fmtDate(b.to)}</div>
                   </div>
                   <div style={{ textAlign: "right" }}><StatusBadge status={b.status} /><div style={{ fontSize: 13, fontWeight: 700, marginTop: 4 }}>{eur(b.total)}</div></div>
