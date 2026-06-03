@@ -45,14 +45,22 @@
   <script type="text/babel" src="views-vehicles.jsx"></script>
   <script type="text/babel" src="app.jsx"></script>
   <script>
-    // demo banner + toast icons (outside React)
-    window.addEventListener("load", () => setTimeout(() => {
-      if (window.lucide) {
-        document.getElementById("toasticon").setAttribute("data-lucide", "check-circle");
-        document.getElementById("demoicon").setAttribute("data-lucide", "eye");
-        lucide.createIcons();
-      }
-    }, 500));
+    // demo banner + toast icons (static, outside React) — build locally, no global scan
+    window.addEventListener("load", function () {
+      setTimeout(function () {
+        try {
+          var L = window.lucide; if (!L) return;
+          function setIcon(id, kebab) {
+            var host = document.getElementById(id); if (!host) return;
+            var pascal = kebab.split("-").map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join("");
+            var node = (L.icons || {})[pascal];
+            if (node && L.createElement) { host.textContent = ""; host.appendChild(L.createElement(node)); }
+          }
+          setIcon("toasticon", "check-circle");
+          setIcon("demoicon", "eye");
+        } catch (e) {}
+      }, 400);
+    });
   </script>
 </body>
 </html>

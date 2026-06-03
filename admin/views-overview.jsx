@@ -4,9 +4,27 @@ const { useState, useEffect, useRef, useMemo } = React;
 function Icon({ name, style, cls }) {
   const ref = useRef(null);
   useEffect(() => {
-    const host = ref.current; if (!host || !window.lucide) return;
-    host.innerHTML = ""; const i = document.createElement("i");
-    i.setAttribute("data-lucide", name); host.appendChild(i); window.lucide.createIcons();
+    const host = ref.current;
+    if (!host || !window.lucide) return;
+    // Build the SVG locally (scoped to this host) — NEVER call the global
+    // lucide.createIcons() which scans the whole document and mutates nodes
+    // React owns, causing "removeChild" crashes. Wrapped in try/catch so an
+    // icon can never crash the app.
+    try {
+      const pascal = name.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join("");
+      const icons = window.lucide.icons || {};
+      const node = icons[pascal] || icons[name];
+      host.textContent = "";
+      if (node && window.lucide.createElement) {
+        host.appendChild(window.lucide.createElement(node));
+      } else {
+        // fallback: isolated <i> + scoped conversion
+        const i = document.createElement("i");
+        i.setAttribute("data-lucide", name);
+        host.appendChild(i);
+        window.lucide.createIcons({ nameAttr: "data-lucide", icons, root: host });
+      }
+    } catch (e) { /* never crash on an icon */ }
   }, [name]);
   return <span className={"ic " + (cls || "")} ref={ref} style={{ display: "inline-flex", lineHeight: 0, ...style }}></span>;
 }
