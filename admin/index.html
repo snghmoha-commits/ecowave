@@ -29,6 +29,32 @@
   <div class="demo-banner"><span id="demoicon"></span>Aperçu de démonstration — données fictives (sera connecté à la base de données)</div>
 
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    // Build a Lucide icon as a standalone SVG element — NO lucide.createIcons()
+    // (which scans the whole document and mutates React-owned nodes → "removeChild"
+    // crash). Reads only the static icon registry (lucide.icons). 100% React-safe.
+    window.makeLucideSvg = function (name) {
+      try {
+        var L = window.lucide; if (!L || !L.icons) return null;
+        var pascal = String(name).split("-").map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join("");
+        var node = L.icons[pascal] || L.icons[name]; if (!node) return null;
+        var children = Array.isArray(node) ? node : (node && node.length ? node : null);
+        if (!children) return null;
+        var ns = "http://www.w3.org/2000/svg";
+        var svg = document.createElementNS(ns, "svg");
+        var base = { width: 24, height: 24, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round" };
+        Object.keys(base).forEach(function (k) { svg.setAttribute(k, base[k]); });
+        svg.setAttribute("class", "lucide lucide-" + name);
+        children.forEach(function (c) {
+          if (!Array.isArray(c)) return;
+          var el = document.createElementNS(ns, c[0]); var attrs = c[1] || {};
+          Object.keys(attrs).forEach(function (k) { el.setAttribute(k, attrs[k]); });
+          svg.appendChild(el);
+        });
+        return svg;
+      } catch (e) { return null; }
+    };
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
@@ -52,9 +78,8 @@
           var L = window.lucide; if (!L) return;
           function setIcon(id, kebab) {
             var host = document.getElementById(id); if (!host) return;
-            var pascal = kebab.split("-").map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join("");
-            var node = (L.icons || {})[pascal];
-            if (node && L.createElement) { host.textContent = ""; host.appendChild(L.createElement(node)); }
+            var svg = window.makeLucideSvg(kebab);
+            if (svg) { host.textContent = ""; host.appendChild(svg); }
           }
           setIcon("toasticon", "check-circle");
           setIcon("demoicon", "eye");
