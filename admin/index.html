@@ -13,16 +13,21 @@
 <body>
   <div id="root"></div>
   <script>
-    // Filet de sécurité : affiche toute erreur à l'écran au lieu d'un écran blanc.
+    // Non-destructive error reporter: shows errors in its OWN layer (never
+    // touches #root, so it can't cascade into React's DOM). Reveals the exact
+    // source file + line so the true culprit is visible.
     window.addEventListener("error", function (e) {
-      var root = document.getElementById("root");
-      if (root && root.children.length <= 1) {
-        root.innerHTML = '<div style="font-family:sans-serif;max-width:560px;margin:60px auto;padding:28px;background:#fff;border:1px solid #E3E7E5;border-radius:16px;color:#0B0F0D">'
-          + '<h2 style="margin:0 0 10px">Une erreur a empeche le chargement</h2>'
-          + '<pre style="background:#F4F6F5;padding:12px;border-radius:8px;font-size:12px;white-space:pre-wrap;color:#B23A33">'
-          + (e.message || "Erreur inconnue") + '</pre>'
-          + '<p style="color:#6A766F;font-size:13px">Recharge la page (Ctrl+Shift+R). Ne modifie pas les fichiers — reinstalle le dossier admin original.</p></div>';
-      }
+      try {
+        if (document.getElementById("__err")) return;
+        var box = document.createElement("div");
+        box.id = "__err";
+        box.style.cssText = "position:fixed;top:16px;left:16px;right:16px;z-index:99999;font-family:monospace;background:#fff;border:2px solid #B23A33;border-radius:12px;padding:16px;color:#0B0F0D;box-shadow:0 12px 30px rgba(0,0,0,.2)";
+        var src = (e.filename || "").split("/").slice(-1)[0] + ":" + (e.lineno || "?") + ":" + (e.colno || "?");
+        box.innerHTML = '<b style="color:#B23A33">Erreur détectée</b><br><br>'
+          + '<span style="color:#B23A33">' + (e.message || "?") + '</span><br><br>'
+          + '<span style="color:#6A766F">Source : ' + src + '</span>';
+        document.body.appendChild(box);
+      } catch (x) {}
     });
   </script>
   <div class="toast" id="toast"><span class="ic" id="toasticon"></span><span id="toastmsg">Enregistré</span></div>
