@@ -38,13 +38,15 @@ function StatusBadge({ status }) {
 
 function Overview({ go }) {
   const A = window.ADMIN;
-  const now = A.bookings.filter(b => b.status === "active").length;
-  const pending = A.bookings.filter(b => b.status === "pending").length;
-  const confirmed = A.bookings.filter(b => b.status === "confirmed").length;
-  const monthRev = A.revenueMonthly[A.revenueMonthly.length - 2]; // Mai (full month)
-  const monthTotal = monthRev.a + monthRev.c;
-  const recent = A.bookings.slice(0, 5);
-  const maxBar = Math.max(...A.revenueMonthly.map(r => r.a + r.c));
+  const bookings = A.bookings || [];
+  const now = bookings.filter(b => b.status === "active").length;
+  const pending = bookings.filter(b => b.status === "pending").length;
+  const confirmed = bookings.filter(b => b.status === "confirmed").length;
+  const rev = (A.revenueMonthly && A.revenueMonthly.length) ? A.revenueMonthly : [{ m: "—", a: 0, c: 0 }];
+  const monthRev = rev[rev.length - 2] || rev[rev.length - 1] || { a: 0, c: 0 };
+  const monthTotal = (monthRev.a || 0) + (monthRev.c || 0);
+  const recent = bookings.slice(0, 5);
+  const maxBar = Math.max(1, ...rev.map(r => (r.a || 0) + (r.c || 0)));
 
   return (
     <div className="view show">

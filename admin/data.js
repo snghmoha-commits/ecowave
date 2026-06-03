@@ -46,10 +46,8 @@ window.ADMIN = (function () {
     { m: "Mai", a: 1950, c: 3250 }, { m: "Juin", a: 700, c: 1500 },
   ];
 
-  return {
+  const A = {
     vehicles, customers, bookings, blocked, revenueMonthly,
-    vehicleById: (id) => vehicles.find(v => v.id === id),
-    customerById: (id) => customers.find(c => c.id === id),
     statusMeta: {
       pending:   { label: "En attente", color: "#B8862A", bg: "#F6ECD6", icon: "clock" },
       confirmed: { label: "Confirmée",  color: "#126B4A", bg: "#E4F1EA", icon: "check-circle" },
@@ -58,4 +56,13 @@ window.ADMIN = (function () {
       cancelled: { label: "Annulée",    color: "#B23A33", bg: "#F6E2E0", icon: "x-circle" },
     },
   };
+  // Helpers read the LIVE arrays (A.vehicles/A.customers are reassigned after
+  // DB.loadAll) and NEVER return undefined — defensive fallbacks prevent crashes.
+  A.vehicleById = (id) => (A.vehicles || []).find(v => v && v.id === id) ||
+    { id: id || "?", name: "Véhicule inconnu", trim: "", cat: "", photo: "../assets/car-front.png",
+      active: true, day: 0, weekend: 0, week: null, deposit: 0, kmDay: 0, extraKm: null,
+      power: "—", fuel: "—", trans: "—", seats: 0, plate: "" };
+  A.customerById = (id) => (A.customers || []).find(c => c && c.id === id) ||
+    { id: id || "?", name: "Client inconnu", phone: "", email: "", city: "", notes: "", source: "—", since: "" };
+  return A;
 })();
