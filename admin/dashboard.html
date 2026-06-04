@@ -160,6 +160,7 @@ input,select,textarea{font-family:inherit}
 .row-act button svg{width:15px;height:15px}
 .row-act button.go-confirm:hover{background:var(--success-bg);border-color:var(--green-500);color:var(--green-600)}
 .row-act button.go-cancel:hover{background:var(--danger-bg);border-color:var(--danger);color:var(--danger)}
+.row-act button.go-delete:hover{background:var(--danger-bg);border-color:var(--danger);color:var(--danger)}
 
 /* ---------- filters / search ---------- */
 .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
@@ -326,8 +327,11 @@ input,select,textarea{font-family:inherit}
 
   <script>
 /* data.js */
-/* Ecowave Admin — mock data layer (fake but realistic). Replaced by Supabase later. */
+/* Ecowave Admin — data layer. Vehicles seed locally (also in Supabase);
+   customers/bookings/blocked start EMPTY and are filled from the database. */
 window.ADMIN = (function () {
+  // Vehicles are real (also stored in Supabase). Kept as a fallback so the
+  // dashboard works even before DB.loadAll() returns.
   const vehicles = [
     { id: "a-class", name: "Mercedes-Benz A-Class", trim: "AMG Line", cat: "Compacte", photo: "../assets/car-front.png",
       active: true, day: 110, weekend: 350, week: 550, deposit: 1000, kmDay: 250, extraKm: 0.50,
@@ -337,45 +341,13 @@ window.ADMIN = (function () {
       power: "170 pk", fuel: "Essence", trans: "Automatique", seats: 5, plate: "1-ABC-002" },
   ];
 
-  const customers = [
-    { id: "c1", name: "Sophie De Vos", phone: "+32 471 22 81 04", email: "sophie.devos@gmail.com", city: "Antwerpen", since: "2025-09", notes: "Cliente fidèle — préfère la Classe C. Toujours ponctuelle.", source: "Instagram" },
-    { id: "c2", name: "Lucas Martin", phone: "+32 478 55 13 90", email: "lucas.martin@outlook.com", city: "Bruxelles", since: "2025-11", notes: "Demande souvent un siège bébé.", source: "WhatsApp" },
-    { id: "c3", name: "Amélie Klein", phone: "+32 495 70 42 18", email: "amelie.klein@gmail.com", city: "Bruxelles", since: "2026-01", notes: "", source: "Site web" },
-    { id: "c4", name: "Karim Benali", phone: "+32 466 88 30 22", email: "k.benali@gmail.com", city: "Antwerpen", since: "2026-02", notes: "Permis depuis 3 ans.", source: "Téléphone" },
-    { id: "c5", name: "Élodie Lambert", phone: "+32 472 19 65 47", email: "elodie.l@hotmail.com", city: "Gent", since: "2026-03", notes: "Walk-in. Paiement cash.", source: "Walk-in" },
-    { id: "c6", name: "Thomas Peeters", phone: "+32 488 04 77 51", email: "t.peeters@gmail.com", city: "Mechelen", since: "2026-04", notes: "", source: "Instagram" },
-  ];
-
-  // statuses: pending | confirmed | active | completed | cancelled
-  const bookings = [
-    { id: "B-1042", customer: "c1", vehicle: "c-class", from: "2026-06-05", to: "2026-06-08", status: "confirmed", total: 1000, source: "Instagram", note: "Livraison à l'aéroport BRU" },
-    { id: "B-1041", customer: "c2", vehicle: "a-class", from: "2026-06-04", to: "2026-06-06", status: "active", total: 350, source: "WhatsApp", note: "" },
-    { id: "B-1040", customer: "c3", vehicle: "a-class", from: "2026-06-12", to: "2026-06-15", status: "pending", total: 550, source: "Site web", note: "Attente confirmation acompte" },
-    { id: "B-1039", customer: "c4", vehicle: "c-class", from: "2026-06-20", to: "2026-06-22", status: "confirmed", total: 500, source: "Téléphone", note: "" },
-    { id: "B-1038", customer: "c5", vehicle: "a-class", from: "2026-05-28", to: "2026-05-30", status: "completed", total: 350, source: "Walk-in", note: "Payé cash" },
-    { id: "B-1037", customer: "c6", vehicle: "c-class", from: "2026-05-22", to: "2026-05-25", status: "completed", total: 750, source: "Instagram", note: "" },
-    { id: "B-1036", customer: "c1", vehicle: "c-class", from: "2026-05-15", to: "2026-05-17", status: "completed", total: 500, source: "Instagram", note: "" },
-    { id: "B-1035", customer: "c2", vehicle: "a-class", from: "2026-05-10", to: "2026-05-12", status: "cancelled", total: 350, source: "WhatsApp", note: "Annulé par le client" },
-    { id: "B-1034", customer: "c4", vehicle: "a-class", from: "2026-05-03", to: "2026-05-06", status: "completed", total: 550, source: "Téléphone", note: "" },
-    { id: "B-1033", customer: "c3", vehicle: "c-class", from: "2026-04-26", to: "2026-04-29", status: "completed", total: 750, source: "Site web", note: "" },
-  ];
-
-  // blocked dates per vehicle (maintenance / personal / external)
-  const blocked = {
-    "a-class": ["2026-06-18", "2026-06-19"],
-    "c-class": ["2026-06-10", "2026-06-11", "2026-06-30"],
-  };
-
-  // monthly revenue (last 8 months) — for charts
-  const revenueMonthly = [
-    { m: "Nov", a: 1450, c: 1900 }, { m: "Déc", a: 1100, c: 2400 },
-    { m: "Jan", a: 1650, c: 2100 }, { m: "Fév", a: 1900, c: 2600 },
-    { m: "Mar", a: 1750, c: 3000 }, { m: "Avr", a: 2200, c: 2800 },
-    { m: "Mai", a: 1950, c: 3250 }, { m: "Juin", a: 700, c: 1500 },
-  ];
+  // NO demo data — these come 100% from Supabase via DB.loadAll().
+  const customers = [];
+  const bookings = [];
+  const blocked = {};
 
   const A = {
-    vehicles, customers, bookings, blocked, revenueMonthly,
+    vehicles, customers, bookings, blocked, revenueMonthly: [],
     statusMeta: {
       pending:   { label: "En attente", color: "#B8862A", bg: "#F6ECD6", icon: "clock" },
       confirmed: { label: "Confirmée",  color: "#126B4A", bg: "#E4F1EA", icon: "check-circle" },
@@ -392,6 +364,31 @@ window.ADMIN = (function () {
       power: "—", fuel: "—", trans: "—", seats: 0, plate: "" };
   A.customerById = (id) => (A.customers || []).find(c => c && c.id === id) ||
     { id: id || "?", name: "Client inconnu", phone: "", email: "", city: "", notes: "", source: "—", since: "" };
+
+  // Recompute the monthly revenue chart (last 8 months) from REAL bookings.
+  // Counts non-cancelled bookings by their start month. Call after any change.
+  A.recomputeRevenue = function () {
+    const months = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"];
+    const now = new Date();
+    const buckets = [];
+    for (let i = 7; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      buckets.push({ key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`, m: months[d.getMonth()], a: 0, c: 0 });
+    }
+    const byKey = {};
+    buckets.forEach(b => { byKey[b.key] = b; });
+    (A.bookings || []).forEach(bk => {
+      if (!bk || bk.status === "cancelled" || !bk.from || typeof bk.from !== "string") return;
+      const key = bk.from.slice(0, 7);
+      const bucket = byKey[key];
+      if (!bucket) return;
+      const amt = Number(bk.total) || 0;
+      if (bk.vehicle === "c-class") bucket.c += amt; else bucket.a += amt;
+    });
+    A.revenueMonthly = buckets;
+    return buckets;
+  };
+  A.recomputeRevenue();
   return A;
 })();
 
@@ -455,6 +452,7 @@ window.DB = (function () {
     const blocked = {};
     (blk.data || []).forEach(r => { (blocked[r.vehicle_id] = blocked[r.vehicle_id] || []).push(r.date); });
     A.blocked = blocked;
+    if (typeof A.recomputeRevenue === "function") A.recomputeRevenue();
     return A;
   }
 
@@ -469,7 +467,7 @@ window.DB = (function () {
 
   // ---- MUTATIONS ----
   async function createBooking(b) {
-    const ref = "B-" + Math.floor(1000 + Math.random() * 9000);
+    const ref = (b.ref && String(b.ref).trim()) ? String(b.ref).trim() : ("B-" + Math.floor(1000 + Math.random() * 9000));
     const { data, error } = await c().from("bookings").insert({
       ref, customer_id: b.customer, vehicle_id: b.vehicle, date_from: b.from, date_to: b.to,
       status: b.status || "confirmed", total: Number(b.total) || 0, source: b.source, note: b.note || "",
@@ -479,6 +477,7 @@ window.DB = (function () {
   }
   async function updateBooking(uuid, patch) {
     const db = {};
+    if (patch.ref != null) db.ref = String(patch.ref).trim();
     if (patch.status != null) db.status = patch.status;
     if (patch.total != null) db.total = Number(patch.total);
     if (patch.from != null) db.date_from = patch.from;
@@ -488,6 +487,14 @@ window.DB = (function () {
     if (patch.source != null) db.source = patch.source;
     if (patch.note != null) db.note = patch.note;
     const { error } = await c().from("bookings").update(db).eq("id", uuid);
+    if (error) throw error;
+  }
+  async function deleteBooking(uuid) {
+    const { error } = await c().from("bookings").delete().eq("id", uuid);
+    if (error) throw error;
+  }
+  async function deleteCustomer(id) {
+    const { error } = await c().from("customers").delete().eq("id", id);
     if (error) throw error;
   }
   async function createCustomer(cu) {
@@ -515,7 +522,7 @@ window.DB = (function () {
     if (error) throw error;
   }
 
-  return { loadAll, signIn, signOut, currentSession, createBooking, updateBooking, createCustomer, setBlocked, updateVehicle };
+  return { loadAll, signIn, signOut, currentSession, createBooking, updateBooking, deleteBooking, createCustomer, deleteCustomer, setBlocked, updateVehicle };
 })();
 
 </script>
@@ -550,27 +557,35 @@ function toast(msg) {
 window.toast = toast;
 
 function initials(name) { return (name || "?").split(" ").map(w => w[0]).filter(Boolean).slice(0, 2).join("").toUpperCase() || "?"; }
-function eur(n) { return "€" + n.toLocaleString("fr-BE"); }
+function eur(n) { return "€" + (Number(n) || 0).toLocaleString("fr-BE"); }
 function fmtDate(s) {
+  if (!s || typeof s !== "string" || s.indexOf("-") < 0) return "—";
   const [y, m, d] = s.split("-");
   const months = ["jan", "fév", "mar", "avr", "mai", "juin", "juil", "août", "sep", "oct", "nov", "déc"];
-  return `${parseInt(d)} ${months[parseInt(m) - 1]}`;
+  return `${parseInt(d)} ${months[parseInt(m) - 1] || ""}`;
 }
-function nights(from, to) { return Math.round((new Date(to) - new Date(from)) / 86400000); }
+function nights(from, to) { const n = Math.round((new Date(to) - new Date(from)) / 86400000); return isNaN(n) ? 0 : n; }
 
 function StatusBadge({ status }) {
-  const m = window.ADMIN.statusMeta[status];
+  const meta = (window.ADMIN.statusMeta) || {};
+  const m = meta[status] || { label: status || "—", color: "#46524D", bg: "#ECEFED", icon: "circle" };
   return <span className="status" style={{ color: m.color, background: m.bg }}><Icon name={m.icon} />{m.label}</span>;
 }
 
 function Overview({ go }) {
   const A = window.ADMIN;
+  const [, force] = useState(0);
+  useEffect(() => {
+    const h = () => force(n => n + 1);
+    window.addEventListener("admin-data-changed", h);
+    return () => window.removeEventListener("admin-data-changed", h);
+  }, []);
   const bookings = A.bookings || [];
   const now = bookings.filter(b => b.status === "active").length;
   const pending = bookings.filter(b => b.status === "pending").length;
   const confirmed = bookings.filter(b => b.status === "confirmed").length;
   const rev = (A.revenueMonthly && A.revenueMonthly.length) ? A.revenueMonthly : [{ m: "—", a: 0, c: 0 }];
-  const monthRev = rev[rev.length - 2] || rev[rev.length - 1] || { a: 0, c: 0 };
+  const monthRev = rev[rev.length - 1] || { a: 0, c: 0, m: "—" };
   const monthTotal = (monthRev.a || 0) + (monthRev.c || 0);
   const recent = bookings.slice(0, 5);
   const maxBar = Math.max(1, ...rev.map(r => (r.a || 0) + (r.c || 0)));
@@ -579,10 +594,9 @@ function Overview({ go }) {
     <div className="view show">
       <div className="kpis">
         <div className="kpi g">
-          <div className="ktrend up"><Icon name="trending-up" />+12%</div>
           <div className="ki"><Icon name="banknote" /></div>
           <div className="kv">{eur(monthTotal)}</div>
-          <div className="kl">Revenus — Mai 2026</div>
+          <div className="kl">Revenus — {monthRev.m || "ce mois"}</div>
         </div>
         <div className="kpi b">
           <div className="ki"><Icon name="car-front" /></div>
@@ -590,14 +604,13 @@ function Overview({ go }) {
           <div className="kl">Location{now > 1 ? "s" : ""} en cours</div>
         </div>
         <div className="kpi o">
-          <div className="ktrend up"><Icon name="arrow-up" />{pending}</div>
           <div className="ki"><Icon name="clock" /></div>
           <div className="kv">{pending + confirmed}</div>
           <div className="kl">Réservations à venir</div>
         </div>
         <div className="kpi p">
           <div className="ki"><Icon name="users" /></div>
-          <div className="kv">{A.customers.length}</div>
+          <div className="kv">{(A.customers || []).length}</div>
           <div className="kl">Clients enregistrés</div>
         </div>
       </div>
@@ -606,13 +619,13 @@ function Overview({ go }) {
         <div className="panel">
           <div className="panel-head"><h3>Revenus mensuels</h3><button className="link" onClick={() => go("revenue")}>Détails →</button></div>
           <div className="chart">
-            {A.revenueMonthly.map((r, i) => {
-              const tot = r.a + r.c, h = (tot / maxBar) * 100;
+            {rev.map((r, i) => {
+              const tot = (r.a || 0) + (r.c || 0), h = (tot / maxBar) * 100;
               return (
                 <div className="bar-col" key={i} title={eur(tot)}>
                   <div className="bar-stack" style={{ height: h + "%" }}>
-                    <div className="bar-c" style={{ height: (r.c / tot * 100) + "%" }}></div>
-                    <div className="bar-a" style={{ height: (r.a / tot * 100) + "%" }}></div>
+                    <div className="bar-c" style={{ height: (tot ? r.c / tot * 100 : 0) + "%" }}></div>
+                    <div className="bar-a" style={{ height: (tot ? r.a / tot * 100 : 0) + "%" }}></div>
                   </div>
                   <span className="bm">{r.m}</span>
                 </div>
@@ -647,7 +660,7 @@ function Overview({ go }) {
                 const cname = c.name || "Client inconnu"; const vname = v.name || "Véhicule";
                 return (
                   <tr key={b.id} className="clickable" onClick={() => go("bookings")}>
-                    <td style={{ fontWeight: 700, color: "var(--ink-500)" }}>{b.id}</td>
+                    <td style={{ fontWeight: 700, color: "var(--ink-500)" }}>{b.ref || b.id}</td>
                     <td><div className="cust-cell"><div className="av">{initials(cname)}</div><div><div className="nm">{cname}</div><div className="meta">{b.source}</div></div></div></td>
                     <td className="hide-m"><div className="veh-cell"><img src={v.photo || ""} alt="" /><b>{vname.replace("Mercedes-Benz ", "")}</b></div></td>
                     <td className="hide-m" style={{ color: "var(--ink-500)" }}>{fmtDate(b.from)} → {fmtDate(b.to)}</td>
@@ -675,8 +688,10 @@ function Bookings({ openNew }) {
   const [filter, setFilter] = useState("all");
   const [q, setQ] = useState("");
   const [modal, setModal] = useState(null); // {mode:'new'|'edit', booking}
+  const [confirmDel, setConfirmDel] = useState(null); // booking to delete
 
   useEffect(() => { if (openNew) setModal({ mode: "new" }); }, [openNew]);
+  function sync() { A.recomputeRevenue && A.recomputeRevenue(); window.dispatchEvent(new Event("admin-data-changed")); }
 
   const filters = [
     { k: "all", label: "Toutes" },
@@ -691,7 +706,7 @@ function Bookings({ openNew }) {
     if (filter !== "all" && b.status !== filter) return false;
     if (q) {
       const c = A.customerById(b.customer) || {};
-      const hay = (b.id + " " + (c.name || "") + " " + b.source).toLowerCase();
+      const hay = ((b.ref || b.id) + " " + (c.name || "") + " " + (b.source || "")).toLowerCase();
       if (!hay.includes(q.toLowerCase())) return false;
     }
     return true;
@@ -701,7 +716,17 @@ function Bookings({ openNew }) {
     const b = list.find(x => x.id === id);
     setList(list.map(x => x.id === id ? { ...x, status } : x));
     if (b) { b.status = status; } // sync window.ADMIN
+    sync();
     try { if (b && b._uuid) await window.DB.updateBooking(b._uuid, { status }); toast(msg); }
+    catch (e) { toast("Erreur — réessayez"); }
+  }
+  async function removeBooking(b) {
+    setConfirmDel(null);
+    setList(list.filter(x => x.id !== b.id));
+    const idx = A.bookings.findIndex(x => x.id === b.id);
+    if (idx >= 0) A.bookings.splice(idx, 1);
+    sync();
+    try { if (b._uuid) await window.DB.deleteBooking(b._uuid); toast("Réservation supprimée"); }
     catch (e) { toast("Erreur — réessayez"); }
   }
   async function saveBooking(data) {
@@ -710,6 +735,7 @@ function Bookings({ openNew }) {
       setList(list.map(b => b._uuid === data._uuid ? { ...b, ...merged } : b));
       const idx = A.bookings.findIndex(b => b._uuid === data._uuid);
       if (idx >= 0) A.bookings[idx] = { ...A.bookings[idx], ...merged };
+      sync();
       try { await window.DB.updateBooking(data._uuid, data); toast("Réservation mise à jour"); }
       catch (e) { toast("Erreur — réessayez"); }
     } else {
@@ -725,6 +751,7 @@ function Bookings({ openNew }) {
         const created = await window.DB.createBooking(booking);
         A.bookings.unshift(created);          // sync window.ADMIN (calendar/overview see it)
         setList([created, ...list]);
+        sync();
         toast("Réservation créée");
       } catch (e) { toast("Erreur — réessayez"); }
     }
@@ -755,7 +782,7 @@ function Bookings({ openNew }) {
                 const cname = c.name || "Client inconnu"; const vname = v.name || "Véhicule";
                 return (
                   <tr key={b.id}>
-                    <td style={{ fontWeight: 700, color: "var(--ink-500)" }}>{b.id}</td>
+                    <td style={{ fontWeight: 700, color: "var(--ink-500)" }}>{b.ref || b.id}</td>
                     <td><div className="cust-cell"><div className="av">{initials(cname)}</div><div><div className="nm">{cname}</div><div className="meta">{c.phone || ""}</div></div></div></td>
                     <td className="hide-m"><div className="veh-cell"><img src={v.photo || ""} alt="" /><b>{vname.replace("Mercedes-Benz ", "")}</b></div></td>
                     <td className="hide-m" style={{ color: "var(--ink-500)" }}>{fmtDate(b.from)} → {fmtDate(b.to)}<div style={{ fontSize: 11, color: "var(--ink-300)" }}>{nights(b.from, b.to)} nuits</div></td>
@@ -767,6 +794,7 @@ function Bookings({ openNew }) {
                         {b.status === "pending" && <button className="go-confirm" title="Confirmer" onClick={() => setStatus(b.id, "confirmed", "Réservation confirmée")}><Icon name="check" /></button>}
                         <button title="Modifier" onClick={() => setModal({ mode: "edit", booking: b })}><Icon name="pencil" /></button>
                         {b.status !== "cancelled" && b.status !== "completed" && <button className="go-cancel" title="Annuler" onClick={() => setStatus(b.id, "cancelled", "Réservation annulée")}><Icon name="x" /></button>}
+                        <button className="go-delete" title="Supprimer définitivement" onClick={() => setConfirmDel(b)}><Icon name="trash-2" /></button>
                       </div>
                     </td>
                   </tr>
@@ -779,13 +807,32 @@ function Bookings({ openNew }) {
       </div>
 
       {modal && <BookingModal mode={modal.mode} booking={modal.booking} onClose={() => setModal(null)} onSave={saveBooking} />}
+      {confirmDel && <ConfirmDialog
+        title="Supprimer la réservation ?"
+        message={`La réservation ${confirmDel.ref || confirmDel.id} sera définitivement supprimée. Cette action est irréversible.`}
+        onCancel={() => setConfirmDel(null)} onConfirm={() => removeBooking(confirmDel)} />}
+    </div>
+  );
+}
+
+function ConfirmDialog({ title, message, onCancel, onConfirm }) {
+  return (
+    <div className="overlay show" onClick={e => { if (e.target.classList.contains("overlay")) onCancel(); }}>
+      <div className="modal" style={{ maxWidth: 420 }}>
+        <div className="modal-body" style={{ textAlign: "center", paddingTop: 28 }}>
+          <div style={{ width: 52, height: 52, borderRadius: 14, background: "var(--danger-bg)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}><Icon name="alert-triangle" style={{ color: "var(--danger)" }} /></div>
+          <h3 style={{ fontFamily: "var(--font-d)", margin: "0 0 8px" }}>{title}</h3>
+          <p style={{ color: "var(--ink-400)", fontSize: 14, lineHeight: 1.5, margin: 0 }}>{message}</p>
+        </div>
+        <div className="modal-foot"><button className="btn-ghost" onClick={onCancel}>Annuler</button><button className="btn-add" style={{ background: "var(--danger)" }} onClick={onConfirm}><Icon name="trash-2" />Supprimer</button></div>
+      </div>
     </div>
   );
 }
 
 function BookingModal({ mode, booking, onClose, onSave }) {
   const A = window.ADMIN;
-  const [f, setF] = useState(booking || { customer: A.customers[0] ? A.customers[0].id : "", vehicle: A.vehicles[0] ? A.vehicles[0].id : "a-class", from: "", to: "", source: "Instagram", status: "confirmed", total: 0, note: "" });
+  const [f, setF] = useState(booking || { ref: "", customer: A.customers[0] ? A.customers[0].id : "", vehicle: A.vehicles[0] ? A.vehicles[0].id : "a-class", from: "", to: "", source: "Instagram", status: "confirmed", total: 0, note: "" });
   const [newCust, setNewCust] = useState(A.customers.length === 0); // start in "new" if no customers yet
   const [nc, setNc] = useState({ name: "", phone: "", city: "" });
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
@@ -826,12 +873,13 @@ function BookingModal({ mode, booking, onClose, onSave }) {
                 </div>}
           </div>
           <div className="grid2">
+            <div className="ff"><label>N° de réservation / facture {mode === "new" && <span style={{ color: "var(--ink-300)", fontWeight: 500 }}>· auto si vide</span>}</label><div className="inp"><Icon name="hash" style={{ width: 16, height: 16, color: "var(--ink-400)" }} /><input value={f.ref || ""} onChange={set("ref")} placeholder={mode === "new" ? "B-1234 (auto)" : "B-1234"} /></div></div>
             <div className="ff"><label>Véhicule</label><select value={f.vehicle} onChange={set("vehicle")}>{A.vehicles.map(x => <option key={x.id} value={x.id}>{x.name}</option>)}</select></div>
             <div className="ff"><label>Source</label><select value={f.source} onChange={set("source")}>{["Instagram", "WhatsApp", "Téléphone", "Walk-in", "Site web"].map(s => <option key={s}>{s}</option>)}</select></div>
+            <div className="ff"><label>Statut</label><select value={f.status} onChange={set("status")}>{Object.entries(A.statusMeta).map(([k, m]) => <option key={k} value={k}>{m.label}</option>)}</select></div>
             <div className="ff"><label>Date de début</label><div className="inp"><input type="date" value={f.from} onChange={set("from")} /></div></div>
             <div className="ff"><label>Date de fin</label><div className="inp"><input type="date" value={f.to} onChange={set("to")} /></div></div>
-            <div className="ff"><label>Statut</label><select value={f.status} onChange={set("status")}>{Object.entries(A.statusMeta).map(([k, m]) => <option key={k} value={k}>{m.label}</option>)}</select></div>
-            <div className="ff"><label>Total (€) {suggested > 0 && <span style={{ color: "var(--ink-300)", fontWeight: 500 }}>· suggéré {eur(suggested)}</span>}</label><div className="inp"><span className="cur">€</span><input type="number" value={f.total} onChange={set("total")} placeholder={suggested || "0"} /></div></div>
+            <div className="ff" style={{ gridColumn: "1 / -1" }}><label>Total (€) {suggested > 0 && <span style={{ color: "var(--ink-300)", fontWeight: 500 }}>· suggéré {eur(suggested)}</span>}</label><div className="inp"><span className="cur">€</span><input type="number" value={f.total} onChange={set("total")} placeholder={suggested || "0"} /></div></div>
           </div>
           <div className="ff"><label>Note interne</label><textarea value={f.note} onChange={set("note")} placeholder="Livraison, paiement, demandes spéciales…"></textarea></div>
         </div>
@@ -840,7 +888,7 @@ function BookingModal({ mode, booking, onClose, onSave }) {
     </div>
   );
 }
-Object.assign(window, { Bookings, BookingModal });
+Object.assign(window, { Bookings, BookingModal, ConfirmDialog });
 
 </script>
   <script type="text/babel">
@@ -890,7 +938,7 @@ function CalView() {
       <div className="cal-tabs">
         {A.vehicles.map(v => (
           <button key={v.id} className={"cal-tab" + (vid === v.id ? " active" : "")} onClick={() => setVid(v.id)}>
-            <img src={v.photo} alt="" />{v.name.replace("Mercedes-Benz ", "")}
+            <img src={v.photo} alt="" />{(v.name || "Véhicule").replace("Mercedes-Benz ", "")}
           </button>
         ))}
       </div>
@@ -931,14 +979,30 @@ function Customers() {
   const A = window.ADMIN;
   const [q, setQ] = useState("");
   const [sel, setSel] = useState(null);
-  const shown = A.customers.filter(c => !q || ((c.name || "") + (c.email || "") + (c.city || "") + (c.source || "")).toLowerCase().includes(q.toLowerCase()));
+  const [confirmDel, setConfirmDel] = useState(null);
+  const [, force] = useState(0);
+  useEffect(() => {
+    const h = () => force(n => n + 1);
+    window.addEventListener("admin-data-changed", h);
+    return () => window.removeEventListener("admin-data-changed", h);
+  }, []);
+  const shown = (A.customers || []).filter(c => !q || ((c.name || "") + (c.email || "") + (c.city || "") + (c.source || "")).toLowerCase().includes(q.toLowerCase()));
 
-  function custBookings(id) { return A.bookings.filter(b => b.customer === id); }
+  function custBookings(id) { return (A.bookings || []).filter(b => b.customer === id); }
+  async function removeCustomer(c) {
+    setConfirmDel(null);
+    const idx = A.customers.findIndex(x => x.id === c.id);
+    if (idx >= 0) A.customers.splice(idx, 1);
+    force(n => n + 1);
+    window.dispatchEvent(new Event("admin-data-changed"));
+    try { await window.DB.deleteCustomer(c.id); toast("Client supprimé"); }
+    catch (e) { toast("Erreur — réessayez"); }
+  }
 
   return (
     <div className="view show">
       <div className="sec-title">
-        <div><h2>Clients</h2><div className="sub">{A.customers.length} clients enregistrés</div></div>
+        <div><h2>Clients</h2><div className="sub">{(A.customers || []).length} clients enregistrés</div></div>
         <button className="btn-add btn-green" onClick={() => toast("Formulaire d'ajout de client")}><Icon name="user-plus" />Ajouter un client</button>
       </div>
       <div className="toolbar"><div className="search"><Icon name="search" /><input placeholder="Rechercher un client…" value={q} onChange={e => setQ(e.target.value)} /></div></div>
@@ -957,7 +1021,7 @@ function Customers() {
                     <td className="hide-m"><span className="src-tag">{c.source}</span></td>
                     <td style={{ fontWeight: 700 }}>{bk.length}</td>
                     <td className="hide-m" style={{ color: "var(--ink-400)" }}>{c.since}</td>
-                    <td><div className="row-act"><button title="Voir la fiche"><Icon name="chevron-right" /></button></div></td>
+                    <td onClick={e => e.stopPropagation()}><div className="row-act"><button title="Voir la fiche" onClick={() => setSel(c)}><Icon name="chevron-right" /></button><button className="go-delete" title="Supprimer le client" onClick={() => setConfirmDel(c)}><Icon name="trash-2" /></button></div></td>
                   </tr>
                 );
               })}
@@ -967,13 +1031,17 @@ function Customers() {
       </div>
 
       {sel && <CustomerDrawer c={sel} bookings={custBookings(sel.id)} onClose={() => setSel(null)} />}
+      {confirmDel && <ConfirmDialog
+        title="Supprimer le client ?"
+        message={`${confirmDel.name} sera définitivement supprimé. Ses réservations ne seront pas effacées mais perdront le lien client.`}
+        onCancel={() => setConfirmDel(null)} onConfirm={() => removeCustomer(confirmDel)} />}
     </div>
   );
 }
 
 function CustomerDrawer({ c, bookings, onClose }) {
   const A = window.ADMIN;
-  const total = bookings.filter(b => b.status !== "cancelled").reduce((s, b) => s + b.total, 0);
+  const total = bookings.filter(b => b.status !== "cancelled").reduce((s, b) => s + (Number(b.total) || 0), 0);
   return (
     <React.Fragment>
       <div className="scrim show" onClick={onClose}></div>
@@ -1002,7 +1070,7 @@ function CustomerDrawer({ c, bookings, onClose }) {
                 <div key={b.id} style={{ border: "1px solid var(--line)", borderRadius: 12, padding: 13, display: "flex", alignItems: "center", gap: 12 }}>
                   <img src={v.photo || ""} alt="" style={{ width: 46, height: 32, borderRadius: 6, objectFit: "cover" }} />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 12.5, fontWeight: 700 }}>{(v.name || "Véhicule").replace("Mercedes-Benz ", "")} · {b.id}</div>
+                    <div style={{ fontSize: 12.5, fontWeight: 700 }}>{(v.name || "Véhicule").replace("Mercedes-Benz ", "")} · {b.ref || b.id}</div>
                     <div style={{ fontSize: 11.5, color: "var(--ink-400)" }}>{fmtDate(b.from)} → {fmtDate(b.to)}</div>
                   </div>
                   <div style={{ textAlign: "right" }}><StatusBadge status={b.status} /><div style={{ fontSize: 13, fontWeight: 700, marginTop: 4 }}>{eur(b.total)}</div></div>
@@ -1023,17 +1091,24 @@ Object.assign(window, { Customers, CustomerDrawer });
 /* Ecowave Admin — Revenue & reporting view */
 function Revenue() {
   const A = window.ADMIN;
-  const completed = A.bookings.filter(b => b.status !== "cancelled");
-  const totalA = A.revenueMonthly.reduce((s, r) => s + r.a, 0);
-  const totalC = A.revenueMonthly.reduce((s, r) => s + r.c, 0);
+  const [, force] = useState(0);
+  useEffect(() => {
+    const h = () => force(n => n + 1);
+    window.addEventListener("admin-data-changed", h);
+    return () => window.removeEventListener("admin-data-changed", h);
+  }, []);
+  const completed = (A.bookings || []).filter(b => b.status !== "cancelled");
+  const rev = (A.revenueMonthly && A.revenueMonthly.length) ? A.revenueMonthly : [{ m: "—", a: 0, c: 0 }];
+  const totalA = rev.reduce((s, r) => s + (r.a || 0), 0);
+  const totalC = rev.reduce((s, r) => s + (r.c || 0), 0);
   const yearTotal = totalA + totalC;
-  const maxBar = Math.max(...A.revenueMonthly.map(r => r.a + r.c));
-  const avgBooking = Math.round(completed.reduce((s, b) => s + b.total, 0) / completed.length);
+  const maxBar = Math.max(1, ...rev.map(r => (r.a || 0) + (r.c || 0)));
+  const avgBooking = completed.length ? Math.round(completed.reduce((s, b) => s + (b.total || 0), 0) / completed.length) : 0;
 
-  const perVehicle = A.vehicles.map(v => {
+  const perVehicle = (A.vehicles || []).map(v => {
     const bk = completed.filter(b => b.vehicle === v.id);
-    const rev = bk.reduce((s, b) => s + b.total, 0);
-    return { v, count: bk.length, rev };
+    const rv = bk.reduce((s, b) => s + (b.total || 0), 0);
+    return { v, count: bk.length, rev: rv };
   });
   const totalRev = perVehicle.reduce((s, p) => s + p.rev, 0);
 
@@ -1054,7 +1129,7 @@ function Revenue() {
         <div className="panel-head"><h3>Revenus mensuels par véhicule</h3></div>
         <div className="chart" style={{ height: 240 }}>
           {A.revenueMonthly.map((r, i) => {
-            const tot = r.a + r.c;
+            const tot = (r.a || 0) + (r.c || 0) || 1;
             return (
               <div className="bar-col" key={i} title={eur(tot)}>
                 <span style={{ fontSize: 11, fontWeight: 700, color: "var(--ink-500)" }}>{eur(tot)}</span>
@@ -1081,7 +1156,7 @@ function Revenue() {
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <img src={p.v.photo} alt="" style={{ width: 40, height: 28, borderRadius: 6, objectFit: "cover" }} />
-                  <div><b style={{ fontSize: 13.5 }}>{p.v.name.replace("Mercedes-Benz ", "")}</b><div style={{ fontSize: 11.5, color: "var(--ink-400)" }}>{p.count} réservations</div></div>
+                  <div><b style={{ fontSize: 13.5 }}>{(p.v.name || "Véhicule").replace("Mercedes-Benz ", "")}</b><div style={{ fontSize: 11.5, color: "var(--ink-400)" }}>{p.count} réservations</div></div>
                 </div>
                 <b style={{ fontFamily: "var(--font-d)", fontSize: 17 }}>{eur(p.rev)}</b>
               </div>
@@ -1188,6 +1263,26 @@ Object.assign(window, { Vehicles, VehicleModal });
   <script type="text/babel">
 /* app.jsx */
 /* Ecowave Admin — app shell: login (Supabase Auth), sidebar, router */
+class ErrorBoundary extends React.Component {
+  constructor(p) { super(p); this.state = { err: null }; }
+  static getDerivedStateFromError(err) { return { err }; }
+  componentDidCatch(err, info) { try { console.error("Admin view error:", err, info); } catch (e) {} }
+  render() {
+    if (this.state.err) {
+      return (
+        <div style={{ padding: 40, fontFamily: "var(--font-b)" }}>
+          <div style={{ maxWidth: 520, margin: "40px auto", background: "#fff", border: "1px solid #E3E7E5", borderRadius: 16, padding: 28, textAlign: "center" }}>
+            <h2 style={{ fontFamily: "var(--font-d)", margin: "0 0 8px" }}>Cette section a rencontré un souci</h2>
+            <p style={{ color: "#6A766F", fontSize: 14, lineHeight: 1.5 }}>Le reste du tableau de bord fonctionne normalement. Recharge la page ou choisis une autre section dans le menu.</p>
+            <button onClick={() => this.setState({ err: null })} style={{ marginTop: 16, background: "#126B4A", color: "#fff", border: "none", borderRadius: 999, padding: "11px 22px", fontWeight: 600, cursor: "pointer" }}>Réessayer</button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function App() {
   const [authed, setAuthed] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -1219,7 +1314,7 @@ function App() {
   }
 
   const A = window.ADMIN;
-  const pending = authed ? A.bookings.filter(b => b.status === "pending").length : 0;
+  const pending = authed ? (A.bookings || []).filter(b => b.status === "pending").length : 0;
   const nav = [
     { k: "overview", label: "Tableau de bord", icon: "layout-dashboard" },
     { k: "bookings", label: "Réservations", icon: "calendar-check", badge: pending },
@@ -1272,12 +1367,14 @@ function App() {
           </div>
         </div>
         <div className="content">
-          {view === "overview" && <Overview go={go} />}
-          {view === "bookings" && <Bookings openNew={openNew} />}
-          {view === "calendar" && <CalView />}
-          {view === "customers" && <Customers />}
-          {view === "revenue" && <Revenue />}
-          {view === "vehicles" && <Vehicles />}
+          <ErrorBoundary key={view}>
+            {view === "overview" && <Overview go={go} />}
+            {view === "bookings" && <Bookings openNew={openNew} />}
+            {view === "calendar" && <CalView />}
+            {view === "customers" && <Customers />}
+            {view === "revenue" && <Revenue />}
+            {view === "vehicles" && <Vehicles />}
+          </ErrorBoundary>
         </div>
       </div>
     </div>
